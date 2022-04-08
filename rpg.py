@@ -17,6 +17,10 @@ def showInstructions():
     ''')
 
 
+# start player with 100 health
+currentHealth = 100
+
+
 def showStatus():
     """determine the current status of the player"""
     # print the player's current status
@@ -24,10 +28,45 @@ def showStatus():
     print('You are in the ' + currentRoom)
     # print the current inventory
     print('Inventory : ' + str(inventory))
-    # print an item if there is one
+    # if there is an item(s)
     if "item" in rooms[currentRoom]:
-        print('You see a ' + rooms[currentRoom]['item'])
+        item = rooms[currentRoom]['item']
+        # check if the item is a list (multiple)
+        if type(item) == list:
+            itemList = item
+            # print on same line as the items
+            print("You see a few items:", end=" ")
+            for i in itemList:
+                # add 'and' between the items for readability
+                it = " and ".join(itemList)
+            print(it)
+        else:
+            print('You see a ' + rooms[currentRoom]['item'])
     print("---------------------------")
+
+
+def fightOption():
+    print("The Monster is coming!")
+    fight_or_flee = input(
+        "Choose '1' to fight for cash or 'go north' to run out the room!")
+    if fight_or_flee == "1":
+        fightMonster()
+    elif fight_or_flee == "go north":
+        move = fight_or_flee
+    else:
+        print(
+            f"You took too long and got bitten your health is now {currentHealth}!!")
+
+
+def fightMonster():
+    print('''
+    RPG Game
+ Slay The Monster!!!
+    ========
+    Commands:
+      punch 
+      kick 
+    ''')
 
 
 # an inventory, which is initially empty
@@ -44,7 +83,7 @@ rooms = {
 
     'Kitchen': {
         'north': 'Hall',
-        'item': 'monster',
+        'item': ['monster', 'cash'],
     },
     'Dining Room': {
         'west': 'Hall',
@@ -55,15 +94,20 @@ rooms = {
         'north': 'Dining Room'
     }
 }
-
 # start the player in the Hall
 currentRoom = 'Hall'
+
 
 showInstructions()
 
 # loop forever
 while True:
     showStatus()
+
+    # if currentRoom == "Kitchen":
+    #     # if monster is there - option to fight
+    #     if "monster" in rooms[currentRoom]['item']:
+    #         fightOption()
 
     # get the player's next 'move'
     # .split() breaks it up into an list array
@@ -102,9 +146,15 @@ while True:
             # tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
 
+    # # if user move is 2 AND monster is in that room, exit
+    # if move[0] == '2' and "monster" in rooms[currentRoom]['item']:
+    #     now_move = 'north'
+    #     currentRoom = rooms[currentRoom][now_move]
 
-# above changes: add description of items with print
 
-# check either by size or using 'in' that inventory has it AND the user is in garden
-# if so start a combat scene
-# choose moves of punch or kick
+# add description of items with print
+# potion leads to api call to grab random gun then a prompt for a 2nd but it costs
+# 2nd battle at garden?
+# choose moves of punch or kick for combat with monster, also theres $ in the room
+# make 2 items(add cash) in a room by changing it to a list --- **DONE**
+# check either by size or using 'in' that inventory has it AND the user is in garden to open a chess with key and WIN game
