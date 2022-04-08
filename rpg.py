@@ -37,13 +37,23 @@ inventory = []
 rooms = {
 
     'Hall': {
-        'south': 'Kitchen'
+        'south': 'Kitchen',
+        'east': 'Dining Room',
+        'item': 'key'
     },
 
     'Kitchen': {
-        'north': 'Hall'
+        'north': 'Hall',
+        'item': 'monster',
+    },
+    'Dining Room': {
+        'west': 'Hall',
+        'south': 'Garden',
+        'item': 'potion'
+    },
+    'Garden': {
+        'north': 'Dining Room'
     }
-
 }
 
 # start the player in the Hall
@@ -91,3 +101,10 @@ while True:
         else:
             # tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
+
+
+# above changes: add description of items with print
+
+# check either by size or using 'in' that inventory has it AND the user is in garden
+# if so start a combat scene
+# choose moves of punch or kick
