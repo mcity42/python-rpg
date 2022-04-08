@@ -104,6 +104,7 @@ showInstructions()
 while True:
     showStatus()
 
+# THIS WORKS BUT WHERE????????
     # if currentRoom == "Kitchen":
     #     # if monster is there - option to fight
     #     if "monster" in rooms[currentRoom]['item']:
@@ -146,12 +147,14 @@ while True:
             # tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
 
+# MAYBE NOT NEEDED
     # # if user move is 2 AND monster is in that room, exit
     # if move[0] == '2' and "monster" in rooms[currentRoom]['item']:
     #     now_move = 'north'
     #     currentRoom = rooms[currentRoom][now_move]
 
 
+# TODO
 # add description of items with print
 # potion leads to api call to grab random gun then a prompt for a 2nd but it costs
 # 2nd battle at garden?
