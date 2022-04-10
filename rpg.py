@@ -5,6 +5,9 @@
 # Replace RPG starter project with this code when new instructions are live
 
 
+from random import randint
+
+
 def showInstructions():
     """Show the game instructions when called"""
     # print a main menu and the commands
@@ -15,10 +18,6 @@ def showInstructions():
       go [direction]
       get [item]
     ''')
-
-
-# start player with 100 health
-currentHealth = 100
 
 
 def showStatus():
@@ -40,6 +39,11 @@ def showStatus():
                 # add 'and' between the items for readability
                 it = " and ".join(itemList)
             print(it)
+            # THIS WORKS BUT WHERE????????
+            if currentRoom == "Kitchen":
+                #     # if monster is there - option to fight
+                if "monster" in rooms[currentRoom]['item']:
+                    fightOption()
         else:
             print('You see a ' + rooms[currentRoom]['item'])
     print("---------------------------")
@@ -51,11 +55,11 @@ def fightOption():
         "Choose '1' to fight for cash or 'go north' to run out the room!")
     if fight_or_flee == "1":
         fightMonster()
-    elif fight_or_flee == "go north":
-        move = fight_or_flee
-    else:
-        print(
-            f"You took too long and got bitten your health is now {currentHealth}!!")
+    # elif fight_or_flee == "go north":
+    #     move = fight_or_flee
+    # else:
+    #     print(
+    #         f"You took too long and got bitten your health is now {currentHealth}!!")
 
 
 def fightMonster():
@@ -67,6 +71,34 @@ def fightMonster():
       punch 
       kick 
     ''')
+
+    # start player with 100 health
+    currentHealth = 100
+    cpuHealth = 100
+    fight_move = ''
+    while currentHealth != 0 and cpuHealth != 0 and fight_move == '':
+        fight_move = input('>')
+        if fight_move == 'punch':
+            event = randint(1, 20)
+            if (event % 2 == 0):
+                currentHealth -= 20
+                fight_move = ''
+                print("User:", currentHealth)
+            else:
+                cpuHealth -= 20
+                fight_move = ''
+                print("cpu:", cpuHealth)
+
+        if fight_move == 'kick':
+            eventKick = randint(1, 20)
+            if (eventKick % 2 != 0):
+                currentHealth -= 10
+                fight_move = ''
+                print("User:", currentHealth)
+            else:
+                cpuHealth -= 10
+                fight_move = ''
+                print("cpu:", cpuHealth)
 
 
 # an inventory, which is initially empty
@@ -146,6 +178,7 @@ while True:
         else:
             # tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
+
 
 # MAYBE NOT NEEDED
     # # if user move is 2 AND monster is in that room, exit
