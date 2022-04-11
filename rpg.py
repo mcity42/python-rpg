@@ -77,7 +77,7 @@ def fightMonster():
                 fight_move = ''
                 print("User:", currentHealth)
             else:
-                cpuHealth -= 20
+                cpuHealth -= 30
                 fight_move = ''
                 print("cpu:", cpuHealth)
 
@@ -88,7 +88,7 @@ def fightMonster():
                 fight_move = ''
                 print("User:", currentHealth)
             else:
-                cpuHealth -= 10
+                cpuHealth -= 15
                 fight_move = ''
                 print("cpu:", cpuHealth)
 
