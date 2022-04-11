@@ -50,16 +50,8 @@ def showStatus():
 
 
 def fightOption():
-    print("The Monster is coming!")
-    fight_or_flee = input(
-        "Choose '1' to fight for cash or 'go north' to run out the room!")
-    if fight_or_flee == "1":
-        fightMonster()
-    # elif fight_or_flee == "go north":
-    #     move = fight_or_flee
-    # else:
-    #     print(
-    #         f"You took too long and got bitten your health is now {currentHealth}!!")
+    print("The Monster is coming! Defeat him!!")
+    fightMonster()
 
 
 def fightMonster():
@@ -136,12 +128,6 @@ showInstructions()
 while True:
     showStatus()
 
-# THIS WORKS BUT WHERE????????
-    # if currentRoom == "Kitchen":
-    #     # if monster is there - option to fight
-    #     if "monster" in rooms[currentRoom]['item']:
-    #         fightOption()
-
     # get the player's next 'move'
     # .split() breaks it up into an list array
     # eg typing 'go east' would give the list:
@@ -180,17 +166,10 @@ while True:
             print('Can\'t get ' + move[1] + '!')
 
 
-# MAYBE NOT NEEDED
-    # # if user move is 2 AND monster is in that room, exit
-    # if move[0] == '2' and "monster" in rooms[currentRoom]['item']:
-    #     now_move = 'north'
-    #     currentRoom = rooms[currentRoom][now_move]
-
-
 # TODO
 # add description of items with print
 # potion leads to api call to grab random gun then a prompt for a 2nd but it costs
-# 2nd battle at garden?
+# 2nd battle in the garden
 # choose moves of punch or kick for combat with monster, also theres $ in the room
 # make 2 items(add cash) in a room by changing it to a list --- **DONE**
 # check either by size or using 'in' that inventory has it AND the user is in garden to open a chess with key and WIN game
