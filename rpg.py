@@ -4,8 +4,10 @@
 
 # Replace RPG starter project with this code when new instructions are live
 
-
+import requests
 from random import randint
+
+API_URL = 'https://zenquotes.io/api/random/'
 
 
 def showInstructions():
@@ -65,7 +67,7 @@ def fightOption():
 def endFight():
     print("An angry giant has been looking for this treasure!\nLuckily for you you're only 5 ft 7 and was able to search underneath the tractor!\n")
     print("Defeat the giant so you can get the heck home!")
-    fightMonster()
+    return fightMonster()
 
 
 def fightMonster():
@@ -137,14 +139,14 @@ Kill Your Attacker!!!
         del rooms[currentRoom]['item'][0]
         # end fight mode
         isFighting = False
-        return
+        return None
 
     if user <= 0:
         # Ascii art link
         print("Game Over")
         lives -= 1
         isFighting = False
-        return
+        return None
 
 
 # an inventory, which is initially empty
@@ -251,10 +253,13 @@ while True and lives > 0:
     elif move[0] == 'use' and 'potion' in inventory:
         if move[1] == 'potion':
             # either API request from genie
+            # add commentary for genie
+            resp = requests.get(API_URL).json()
+            quote = resp[0]['q']
             # use cash here somehow for weapons
             # remove it from inventory
             # weapon for monster? if use randomly someone comes?
-            print('TODO1')
+            print(quote)
 
     # if user uses the key in the garden
     elif move[0] == 'use' and move[1] == 'key' and currentRoom == 'Garden':
