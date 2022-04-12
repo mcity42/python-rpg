@@ -30,6 +30,7 @@ def showStatus():
     # if there is an item(s)
     if "item" in rooms[currentRoom]:
         item = rooms[currentRoom]['item']
+        checkForMonsters()
         # check if the item is a list (multiple)
         if type(item) == list:
             itemList = item
@@ -42,6 +43,18 @@ def showStatus():
         elif type(item) == str:
             print('You see a ' + rooms[currentRoom]['item'])
     print("---------------------------")
+
+
+def checkForMonsters():
+    if (currentRoom == "Kitchen" or currentRoom == "Garden"):
+        if ("monster" in rooms[currentRoom]['item']) or ("giant" in rooms[currentRoom]['item']):
+            #         # if monster is there - option to fight
+            if isFighting == False and "monster" in rooms[currentRoom]['item']:
+                fightOption()
+                fightMonster()
+        elif "giant" in rooms[currentRoom]['item']:
+            fightOption()
+            endFight()
 
 
 def fightOption():
@@ -174,73 +187,74 @@ showInstructions()
 # loop forever
 while True and lives > 0:
 
-    if ("monster" in rooms[currentRoom]['item']) or ("giant" in rooms[currentRoom]['item']):
-        # if monster is there - option to fight
-        if isFighting == False and "monster" in rooms[currentRoom]['item']:
-            fightOption()
-            fightMonster()
-        else:
-            fightOption()
-            endFight()
-
-    else:
-        showStatus()
+    showStatus()
     # get the player's next 'move'
     # .split() breaks it up into an list array
     # eg typing 'go east' would give the list:
     # ['go','east']
-        move = ''
-        while move == '':
-            move = input('>')
+    move = ''
+    while move == '':
+        move = input('>')
 
     # split allows an items to have a space on them
     # get golden key is returned ["get", "golden key"]
         move = move.lower().split(" ", 1)
 
     # if they type 'go' first
-        if move[0] == 'go':
-            # check that they are allowed wherever they want to go
-            if move[1] in rooms[currentRoom]:
-                # set the current room to the new room
-                currentRoom = rooms[currentRoom][move[1]]
+    if move[0] == 'go':
+        # check that they are allowed wherever they want to go
+        if move[1] in rooms[currentRoom]:
+            # set the current room to the new room
+            currentRoom = rooms[currentRoom][move[1]]
         # there is no door (link) to the new room
-            else:
-                print('You can\'t go that way!')
+        else:
+            print('You can\'t go that way!')
 
     # if they type 'get' first
-        elif move[0] == 'get':
-            # if the room contains an item, and the item is the one they want to get
-            if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item']:
-                # add the item to their inventory
-                inventory += [move[1]]
+    elif move[0] == 'get':
+        # if the room contains an item, and the item is the one they want to get
+        if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item'] and move[1] != "giant":
+            # add the item to their inventory
+            inventory += [move[1]]
             # display a helpful message
-                print(move[1] + ' got!')
+            print(move[1] + ' got!')
             # delete the item from the room
+            if (type(rooms[currentRoom]['item']) == str):
                 del rooms[currentRoom]['item']
+            elif(type(rooms[currentRoom]['item']) == list):
+                del rooms[currentRoom]['item'][1]
 
-                if move[1] == 'potion':
-                    print('Use the \'use potion\' command to see what\'s in store!')
+            if move[1] == 'cash':
+                print("You just found $50,000! This should come in handy!")
+                # replace 'cash' as $50k for user to see amount
+                inventory.pop(-1)
+                inventory += ['$50,000']
+
+            if move[1] == 'potion':
+                print('Use the \'use potion\' command to see what\'s in store!')
+
         # otherwise, if the item isn't there to get
-            else:
-                # tell them they can't get it
-                print('Can\'t get ' + move[1] + '!')
+        else:
+            # tell them they can't get it
+            print('Can\'t get ' + move[1] + '!')
 
     # if the user chooses to get potion
-        elif move[0] == 'use' and 'potion' in inventory:
-            if move[1] == 'potion':
-                # either API request from genie
-                # use cash here somehow for weapons
-                # weapon for monster? if use randomly someone comes?
-                print('TODO1')
+    elif move[0] == 'use' and 'potion' in inventory:
+        if move[1] == 'potion':
+            # either API request from genie
+            # use cash here somehow for weapons
+            # remove it from inventory
+            # weapon for monster? if use randomly someone comes?
+            print('TODO1')
 
     # if user uses the key in the garden
-        elif move[0] == 'use' and move[1] == 'key' and currentRoom == 'Garden':
-            print("TODO2")
+    elif move[0] == 'use' and move[1] == 'key' and currentRoom == 'Garden':
+        print("TODO2")
         # another monster comes to fight for rest of cash and the treasure
         # gun takes more health down of monster
         # end the game and print ascii art here IF inventory has all things
         # need the rest of the cash to get home
 
-        else:
-            print("Invalid command")
-            move = ''
+    else:
+        print("Invalid command")
+        move = ''
