@@ -34,7 +34,6 @@ def showStatus():
         item = rooms[currentRoom]['item']
         # check if the item is a list (multiple)
         if type(item) == list and item != []:
-            print(item)
             itemList = item
             # print on same line as the items
             print("You see a few items:", end=" ")
@@ -55,7 +54,7 @@ def checkForMonsters():
             if isFighting == False and "monster" in rooms[currentRoom]['item']:
                 fightOption()
                 fightMonster()
-        elif "giant" in rooms[currentRoom]['item'] and 'treasure' in inventory:
+        elif "giant" in rooms[currentRoom]['item'] and '50kg of gold and silver' in inventory:
             fightOption()
             endFight()
 
@@ -67,7 +66,11 @@ def fightOption():
 def endFight():
     print("An angry giant has been looking for this treasure!\nLuckily for you you're only 5 ft 7 and was able to search underneath the tractor!\n")
     print("Defeat the giant so you can get the heck home!")
-    return fightMonster()
+    fightMonster()
+
+
+def giantChase():
+    print("TODO if use key in another room")
 
 
 def fightMonster():
@@ -234,13 +237,16 @@ while True and lives > 0:
                 inventory.pop(-1)
                 inventory += ['$50,000']
 
-            if move[1] == 'treasure chest' and 'treasure chest' in rooms[currentRoom]['item']:
-                use_key = input("Use the Key!!").lower()
-                if use_key == 'use key':
+            if move[1] == 'treasure chest' and 'treasure chest' in inventory:
+                use_key = input("Use the Key!! ").strip().lower()
+                if use_key == 'use key' and 'key' in inventory:
                     inventory.pop(-1)
                     # replace 'cash' as $50k for user to see amount
                     inventory += ['50kg of gold and silver']
-
+                    showStatus()
+                    endFight()
+                else:
+                    print("You need a key")
             if move[1] == 'potion':
                 print('Use the \'use potion\' command to see what\'s in store!')
 
@@ -262,8 +268,16 @@ while True and lives > 0:
             print(quote)
 
     # if user uses the key in the garden
-    elif move[0] == 'use' and move[1] == 'key' and currentRoom == 'Garden':
+    elif move[0] == 'use' and move[1] == 'key' and 'treasure chest' in inventory:
         print("TODO2")
+        use_key = input("Use the Key!! ").strip().lower()
+        if use_key == 'use key' and 'key' in inventory:
+            # inventory.pop(-1)  remove index of chest
+            # replace 'cash' as $50k for user to see amount
+            inventory += ['50kg of gold and silver']
+            showStatus()
+            giantChase()
+
         # another monster comes to fight for rest of cash and the treasure
         # gun takes more health down of monster
         # end the game and print ascii art here IF inventory has all things
