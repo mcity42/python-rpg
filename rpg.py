@@ -28,20 +28,21 @@ def showStatus():
     # print the current inventory
     print('Inventory : ' + str(inventory))
     # if there is an item(s)
-    if "item" in rooms[currentRoom]:
+    if "item" in rooms[currentRoom] and rooms[currentRoom]['item'] != []:
         item = rooms[currentRoom]['item']
-        checkForMonsters()
         # check if the item is a list (multiple)
-        if type(item) == list:
+        if type(item) == list and item != []:
+            print(item)
             itemList = item
             # print on same line as the items
             print("You see a few items:", end=" ")
-            for i in itemList:
+            for i in item:
                 # add 'and' between the items for readability
                 it = " and ".join(itemList)
             print(it)
-        elif type(item) == str:
-            print('You see a ' + rooms[currentRoom]['item'])
+            checkForMonsters()
+        else:
+            print('You see a ', rooms[currentRoom]['item'])
     print("---------------------------")
 
 
@@ -52,7 +53,7 @@ def checkForMonsters():
             if isFighting == False and "monster" in rooms[currentRoom]['item']:
                 fightOption()
                 fightMonster()
-        elif "giant" in rooms[currentRoom]['item']:
+        elif "giant" in rooms[currentRoom]['item'] and 'treasure' in inventory:
             fightOption()
             endFight()
 
@@ -213,7 +214,7 @@ while True and lives > 0:
     # if they type 'get' first
     elif move[0] == 'get':
         # if the room contains an item, and the item is the one they want to get
-        if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item'] and move[1] != "giant":
+        if "item" in rooms[currentRoom] and move[1] in rooms[currentRoom]['item'] and move[1] != "giant" and move[1] != "monster":
             # add the item to their inventory
             inventory += [move[1]]
             # display a helpful message
@@ -222,13 +223,21 @@ while True and lives > 0:
             if (type(rooms[currentRoom]['item']) == str):
                 del rooms[currentRoom]['item']
             elif(type(rooms[currentRoom]['item']) == list):
-                del rooms[currentRoom]['item'][1]
+                index = rooms[currentRoom]['item'].index(move[1])
+                del rooms[currentRoom]['item'][index]
 
-            if move[1] == 'cash':
+            if move[1] == 'cash' and 'cash' in inventory:
                 print("You just found $50,000! This should come in handy!")
                 # replace 'cash' as $50k for user to see amount
                 inventory.pop(-1)
                 inventory += ['$50,000']
+
+            if move[1] == 'treasure chest' and 'treasure chest' in rooms[currentRoom]['item']:
+                use_key = input("Use the Key!!").lower()
+                if use_key == 'use key':
+                    inventory.pop(-1)
+                    # replace 'cash' as $50k for user to see amount
+                    inventory += ['50kg of gold and silver']
 
             if move[1] == 'potion':
                 print('Use the \'use potion\' command to see what\'s in store!')
@@ -254,6 +263,7 @@ while True and lives > 0:
         # gun takes more health down of monster
         # end the game and print ascii art here IF inventory has all things
         # need the rest of the cash to get home
+        # remove item short words po ke etc
 
     else:
         print("Invalid command")
