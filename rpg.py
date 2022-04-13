@@ -109,6 +109,7 @@ Kill Your Attacker!!!
             if (event % 2 == 0):
                 user -= 20
                 fight_move = ''
+                print("Ouch you\'re bleeding.")
                 print("User:", user)
             else:
                 print('Sick jab!')
@@ -152,16 +153,22 @@ Kill Your Attacker!!!
 
     # if cpu character's health is zero
     if cpu <= 0:
-        print(f"{item} defeated! Go get the cash!")
+        print(f"{item} defeated!")
         # remove the monster/giant from room
         if item == 'giant':
             del rooms['Garden']['item'][0]
         else:
             del rooms[currentRoom]['item'][0]
         # end fight mode
+        if ['$50,000', '50kg of gold and silver'] in inventory:
+            print("C O N G R A T U L A T I O N S")
+            print(
+                "You successfully escaped with all items and have enough funds to go home!")
+            sys.exit()
+        else:
+            showStatus()
         isFighting = False
         endGame()
-        return None
 
     if user <= 0:
         print("Game Over. Try Again!")
