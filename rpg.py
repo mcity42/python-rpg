@@ -3,7 +3,7 @@
    a dictionary object | Alta3 Research"""
 
 # Replace RPG starter project with this code when new instructions are live
-
+import sys
 import requests
 from random import randint
 
@@ -164,17 +164,15 @@ Kill Your Attacker!!!
         return None
 
     if user <= 0:
-        # Ascii art link
-        print("Game Over")
-        isPlay == False
-        isFighting = False
-        return None
+        print("Game Over. Try Again!")
+        print('-----------------------')
+        sys.exit()
 
 
 def endGame():
     if ['key', '50kg of gold and silver', '$50,000', 'potion'] in inventory:
-        print("Game over")
-        isPlay = False
+        print("Congrats!! You won the game!!!")
+        sys.exit()
 
 
 # an inventory, which is initially empty
@@ -214,6 +212,10 @@ showInstructions()
 
 # loop forever
 while isPlay == True:
+
+    if len(inventory) >= 5 and '50kg of gold and silver' in inventory:
+        break
+
     showStatus()
     # get the player's next 'move'
     # .split() breaks it up into an list array
@@ -257,18 +259,19 @@ while isPlay == True:
                 # replace 'cash' as $50k for user to see amount
                 inventory.pop(-1)
                 inventory += ['$50,000']
+                endGame()
 
             if move[1] == 'treasure chest' and 'treasure chest' in inventory:
                 use_key = input(
-                    "Use the key [command--> 'use key']!! ").strip().lower()
-                if use_key == 'use key' and 'key' in inventory:
+                    "Use the key [command--> 'use key']!!").lower()
+                if use_key == 'use key' and 'treasure chest' in inventory:
                     inventory.pop(-1)
-                    # replace 'cash' as $50k for user to see amount
                     inventory += ['50kg of gold and silver']
+                    print('Jackpot!!! The hidden gold was found!!')
                     showStatus()
-                    endFight()
-                else:
-                    print("You need a key")
+                    giantChase()
+                    endGame()
+
             if move[1] == 'potion':
                 print('Use the \'use potion\' command to see what\'s in store!')
 
@@ -291,15 +294,15 @@ while isPlay == True:
             print("No time for that right now!")
     # if user uses the key in the garden
     elif move[0] == 'use' and move[1] == 'key' and 'treasure chest' in inventory:
-        inventory.pop(-1)
+        index = inventory.index('treasure chest')
+        inventory.pop(index)
         inventory += ['50kg of gold and silver']
         print('Jackpot!!! The hidden gold was found!!')
         showStatus()
         giantChase()
-
-        # end the game and print ascii art here IF inventory has all things
-        # need the rest of the cash to get home
-        # remove item short words po ke etc
+        endGame()
+    elif move[0] == 'use' and move[1] == 'key' and 'treasure chest' not in inventory:
+        print("You need a key")
 
     else:
         print("Invalid command")
