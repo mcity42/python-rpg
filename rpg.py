@@ -9,6 +9,8 @@ from random import randint
 
 API_URL = 'https://zenquotes.io/api/random/'
 
+isPlay = True
+
 
 def showInstructions():
     """Show the game instructions when called"""
@@ -43,7 +45,8 @@ def showStatus():
             print(it)
             checkForMonsters()
         else:
-            print('You see a ', rooms[currentRoom]['item'])
+            print('You see a', rooms[currentRoom]['item'])
+    endGame()
     print("---------------------------")
 
 
@@ -65,12 +68,14 @@ def fightOption():
 
 def endFight():
     print("An angry giant has been looking for this treasure!\nLuckily for you you're only 5 ft 7 and was able to search underneath the tractor!\n")
+    print('Haha! You also found 4 bullets out on the seat!!')
     print("Defeat the giant so you can get the heck home!")
     fightMonster()
 
 
 def giantChase():
-    print("TODO if use key in another room")
+    print('Look behind you he\'s coming in!')
+    endFight()
 
 
 def fightMonster():
@@ -83,15 +88,16 @@ Kill Your Attacker!!!
       kick 
       shoot
     ''')
-    item = rooms[currentRoom]['item'][0]
+    if currentRoom == 'Kitchen':
+        item = rooms[currentRoom]['item'][0]
+    else:
+        item = 'giant'
     # start player with 100 health
-    currentHealth = 100
-    cpuHealth = 100
-    cpu = cpuHealth
-    user = currentHealth
+    user = 100
+    cpu = 100
 
-    if 'gun' in inventory:
-        bullets = 12
+    bullets = 4
+    if 'gun' in inventory and bullets > 0:
         print('Use your gun for more damage!')
 
     fight_move = ''
@@ -101,55 +107,74 @@ Kill Your Attacker!!!
         if fight_move == 'punch' and cpu > 0 and user > 0:
             event = randint(1, 20)
             if (event % 2 == 0):
-                user -= 10
+                user -= 20
                 fight_move = ''
                 print("User:", user)
             else:
-                cpu -= 25
+                print('Sick jab!')
+                cpu -= 15
                 fight_move = ''
-                print("cpu:", cpu)
-
+                print(f"{item}\'s health:", cpu)
         elif fight_move == 'kick' and cpu > 0 and user > 0:
             eventKick = randint(1, 20)
             if (eventKick % 2 != 0):
-                currentHealth -= 10
+                user -= 25
                 fight_move = ''
+                print('Almost! He caught you slipping!')
                 print("User:", user)
             else:
-                cpuHealth -= 25
+                print('What a kick!')
+                cpu -= 15
                 fight_move = ''
-                print("cpu:", cpu)
+                print(f"{item}\'s health:", cpu)
 
-        elif (fight_move == 'shoot' and 'gun' in inventory) and user > 0 and cpu > 0:
+        elif (fight_move == 'shoot' and bullets > 0) and user > 0 and cpu > 0:
             eventShoot = randint(1, 20)
-            if (eventShoot < 4):
-                print("Bad aim you missed!")
+            if (eventShoot < 8):
                 bullets -= 1
+                print(f"Bad aim you missed! {bullets} bullets left!")
                 fight_move = ''
             else:
-                cpu -= 45
+                cpu -= 25
+                bullets -= 1
                 print(
-                    f"Bullseye! The {item}\'s health dropped to {user}. {bullets} bullets left!")
+                    f"Bullseye! The {item}\'s health dropped to {cpu}. {bullets} bullets left!")
                 fight_move = ''
-        elif fight_move == 'shoot' and 'gun' not in inventory:
-            print("You don't have a gun son!")
+        elif fight_move == 'shoot' and bullets <= 0:
+            print("You got nothing to shoot son! -5 health!")
+            user -= 5
+            fight_move = ''
+        elif fight_move not in ['shoot', 'punch', 'kick']:
+            user -= 20
+            print('False moves will cost you! You\'ve been bitten')
+            print('Your health is', user)
             fight_move = ''
 
     # if cpu character's health is zero
     if cpu <= 0:
-        print("Monster Defeated! You can now get the cash!")
+        print(f"{item} defeated! Go get the cash!")
         # remove the monster/giant from room
-        del rooms[currentRoom]['item'][0]
+        if item == 'giant':
+            del rooms['Garden']['item'][0]
+        else:
+            del rooms[currentRoom]['item'][0]
         # end fight mode
         isFighting = False
+        endGame()
         return None
 
     if user <= 0:
         # Ascii art link
         print("Game Over")
-        lives -= 1
+        isPlay == False
         isFighting = False
         return None
+
+
+def endGame():
+    if ['key', '50kg of gold and silver', '$50,000', 'potion'] in inventory:
+        print("Game over")
+        isPlay = False
 
 
 # an inventory, which is initially empty
@@ -157,9 +182,6 @@ inventory = ['gun']
 
 # boolean for fight mode
 isFighting = False
-
-# lives
-lives = 2
 
 
 # a dictionary linking a room to other rooms
@@ -191,8 +213,7 @@ currentRoom = 'Hall'
 showInstructions()
 
 # loop forever
-while True and lives > 0:
-
+while isPlay == True:
     showStatus()
     # get the player's next 'move'
     # .split() breaks it up into an list array
@@ -238,7 +259,8 @@ while True and lives > 0:
                 inventory += ['$50,000']
 
             if move[1] == 'treasure chest' and 'treasure chest' in inventory:
-                use_key = input("Use the Key!! ").strip().lower()
+                use_key = input(
+                    "Use the key [command--> 'use key']!! ").strip().lower()
                 if use_key == 'use key' and 'key' in inventory:
                     inventory.pop(-1)
                     # replace 'cash' as $50k for user to see amount
@@ -255,31 +277,26 @@ while True and lives > 0:
             # tell them they can't get it
             print('Can\'t get ' + move[1] + '!')
 
-    # if the user chooses to get potion
+    # if the user chooses to get potion and use it, magic genie appears
+    # the quote given from genie is from the API get request
     elif move[0] == 'use' and 'potion' in inventory:
-        if move[1] == 'potion':
-            # either API request from genie
-            # add commentary for genie
+        if move[1] == 'potion' and isFighting == False:
+            print('KABOWWW a blue magic genie just appeared in the room!')
+            print('Use potion anytime you need some quick wisdom!')
             resp = requests.get(API_URL).json()
             quote = resp[0]['q']
-            # use cash here somehow for weapons
-            # remove it from inventory
-            # weapon for monster? if use randomly someone comes?
+            print("Genie:", end=' ')
             print(quote)
-
+        elif isFighting == True:
+            print("No time for that right now!")
     # if user uses the key in the garden
     elif move[0] == 'use' and move[1] == 'key' and 'treasure chest' in inventory:
-        print("TODO2")
-        use_key = input("Use the Key!! ").strip().lower()
-        if use_key == 'use key' and 'key' in inventory:
-            # inventory.pop(-1)  remove index of chest
-            # replace 'cash' as $50k for user to see amount
-            inventory += ['50kg of gold and silver']
-            showStatus()
-            giantChase()
+        inventory.pop(-1)
+        inventory += ['50kg of gold and silver']
+        print('Jackpot!!! The hidden gold was found!!')
+        showStatus()
+        giantChase()
 
-        # another monster comes to fight for rest of cash and the treasure
-        # gun takes more health down of monster
         # end the game and print ascii art here IF inventory has all things
         # need the rest of the cash to get home
         # remove item short words po ke etc
